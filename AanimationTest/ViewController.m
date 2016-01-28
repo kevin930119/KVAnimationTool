@@ -19,13 +19,15 @@
     UIImageView * _imageView;
     
     UIImageView * _roundImage;
+    
+    UILabel * _colorLabel;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     self.view.backgroundColor = [UIColor whiteColor];
-    [self initUI];
+//    [self initUI];
     //要想监听到动画的开始与停止，必须先设置代理
     [KVAnimationTool sharedAnimationTool].delegate = self;
     //拉伸动画
@@ -39,7 +41,11 @@
     //抛物线
 //    [self throwLine];
     //多组动画组合
-    [self groupAnimation];
+//    [self groupAnimation];
+    
+    //颜色动画
+    [self colorUI];
+//    [self colorAnimation];
 }
 
 - (void)initUI {
@@ -118,6 +124,32 @@ bool flag = NO;
     [self.view insertSubview:_imageView atIndex:0];
     //添加过渡效果
     [[KVAnimationTool sharedAnimationTool] viewTransitionWithView:self.view type:@"suckEffect" subType:kCATransitionFromLeft duration:1.0f];
+}
+
+#pragma mark - 颜色渐变动画
+
+- (void)colorUI {
+    NSString * str = @"我是魏佳林，我叫魏佳林";
+    NSMutableAttributedString * mstr = [[NSMutableAttributedString alloc] initWithString:str];
+    [mstr addAttributes:@{NSFontAttributeName : [UIFont systemFontOfSize:20], NSForegroundColorAttributeName : [UIColor redColor]} range:NSMakeRange(2, 3)];
+    [mstr addAttributes:@{NSFontAttributeName : [UIFont systemFontOfSize:20], NSForegroundColorAttributeName : [UIColor redColor]} range:NSMakeRange(8, 3)];
+    
+    _colorLabel = [[UILabel alloc] initWithFrame:CGRectMake(100, 200, 300, 50)];
+    _colorLabel.attributedText = mstr;
+    [self.view addSubview:_colorLabel];
+    [self colorAnimation];
+}
+
+- (void)colorAnimation {
+    CABasicAnimation * colorAnimation = [CABasicAnimation animation];
+    colorAnimation.fromValue = (id)[UIColor yellowColor].CGColor;
+    colorAnimation.toValue = (id)[UIColor blueColor].CGColor;
+    colorAnimation.duration = 10.0f;
+    colorAnimation.repeatCount = 1;
+    colorAnimation.removedOnCompletion = NO;
+    colorAnimation.autoreverses = NO;
+    colorAnimation.fillMode = kCAFillModeForwards;
+    [_colorLabel.layer addAnimation:colorAnimation forKey:@"backgroundColor"];
 }
 
 - (void)didReceiveMemoryWarning {
